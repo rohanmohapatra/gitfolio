@@ -21,6 +21,7 @@ program
   .option("-s, --sort [sort]", "set default sort for repository", "created")
   .option("-o, --order [order]", "set default order on sort", "asc")
   .option("-i, --ogimage [image]", "set the open graph image", null)
+  .option("--gitlab [username]", "add repos from GitLab", null)
   .action(buildCommand);
 
 program

@@ -71,11 +71,12 @@ async function populateCSS({
   await fs.writeFileAsync(config, JSON.stringify(data, null, " "));
 }
 
-async function populateConfig(sort, order, includeFork) {
+async function populateConfig(sort, order, includeFork, gitLab) {
   const data = await getConfig();
   data[0].sort = sort;
   data[0].order = order;
   data[0].includeFork = includeFork;
+  data[0].gitLabUserName = gitLab;
   await fs.writeFileAsync(config, JSON.stringify(data, null, " "));
 }
 
@@ -101,8 +102,9 @@ async function buildCommand(username, program) {
   let order = program.order ? program.order : "asc";
   let includeFork = program.fork ? true : false;
   let image = program.ogimage;
-  await populateConfig(sort, order, includeFork);
-  updateHTML(("%s", username), sort, order, includeFork, image);
+  let gitlab = program.gitlab;
+  await populateConfig(sort, order, includeFork, gitlab);
+  updateHTML(("%s", username), sort, order, includeFork, image, gitlab);
 }
 
 module.exports = {

@@ -6,6 +6,7 @@
   "sort": null,
   "order": null,
   "includeFork": null,
+  "gitLabUserName" : null,
   "theme": "light.css"
  }
 ]

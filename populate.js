@@ -35,7 +35,7 @@ function convertToEmoji(text) {
   }
 }
 
-module.exports.updateHTML = (username, sort, order, includeFork, image) => {
+module.exports.updateHTML = (username, sort, order, includeFork, image, gitLab) => {
   var twitter, linkedin, medium;
   getSocials().then(function(socials) {
     twitter = socials.twitter;
@@ -84,9 +84,18 @@ module.exports.updateHTML = (username, sort, order, includeFork, image) => {
               repos = repos.concat(tempRepos);
             } while (tempRepos.length == 100);
           }
+          if(gitLab){
+            do{
+              tempRepos = await got(`https://gitlab.com/api/v4/users/${gitLab}/projects?per_page=100`);
+              tempRepos = JSON.parse(tempRepos.body);
+              repos = repos.concat(tempRepos);
+            } while (tempRepos.length == 100);
+            // in the GitLab API, sort means ordering (ascending/descending) and order_by means sort criteria - https://docs.gitlab.com/ee/api/projects.html#list-all-project
+          }
+          console.log(repos);
           for (var i = 0; i < repos.length; i++) {
             if (ignored.indexOf(repos[i].name) != -1) continue;
-            if (repos[i].fork == false) {
+            if (true) {
               document.getElementById("work_section").innerHTML += `
                         <a href="${repos[i].html_url}" target="_blank">
                         <section>
@@ -119,7 +128,7 @@ module.exports.updateHTML = (username, sort, order, includeFork, image) => {
               if (includeFork == true) {
                 document.getElementById("forks").style.display = "block";
                 document.getElementById("forks_section").innerHTML += `
-                            <a href="${repos[i].html_url}" target="_blank">
+                            <a href="${repos[i].html_url?repos[i].html_url:repos[i].web_url}" target="_blank">
                             <section>
                                 <div class="section_title">${
                                   repos[i].name
@@ -142,7 +151,7 @@ module.exports.updateHTML = (username, sort, order, includeFork, image) => {
                   repos[i].language
                 }</span>
                                     <span><i class="fas fa-star"></i>&nbsp; ${
-                                      repos[i].stargazers_count
+                                      repos[i].stargazers_count? repos[i].stargazers_count : repos[i].star_count
                                     }</span>
                                     <span><i class="fas fa-code-branch"></i>&nbsp; ${
                                       repos[i].forks_count
